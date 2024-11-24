@@ -1,6 +1,6 @@
 import pickle
 import time
-
+#class resposible for saving and loading players and enemy data to the game
 class saves():
     def __init__(self):
         self.saved=[]

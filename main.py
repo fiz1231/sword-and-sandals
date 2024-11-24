@@ -14,14 +14,16 @@ except ImportError as e:
 else:
     if init()[1]!=0:
         raise Exception("Some imported pygame modules coud't be uploaded")
+    # uploading saves
     game_saves=save.saves()
     game_saves.load()
-    print(game_saves.saved)
+    # setup window width, height and ground level for characters to walk
     arena_level = 500
     window_width = 1000
     window_height = 800
     surface = display.set_mode([window_width,window_height],flags=0,depth=3,display=0,vsync=0)
     clock=time.Clock()
+    # loading back ground and sound effects
     bg_image = transform.scale(
         image.load('images/background.jpg').convert_alpha(), (window_width, window_height))
     victory=mixer.Sound('sounds/victory.mp3')
@@ -40,6 +42,7 @@ else:
     import pygame
 
 
+    # button class for every button in program;  takes image for button, x as position in x axis and y as y position in acis, scale is for size of button by default is 1,
     class button(pygame.sprite.Sprite):
         def __init__(self, image,x, y,scale=1):
             super().__init__()
@@ -75,6 +78,7 @@ else:
             self.on = visible_boolean
 
 
+    # class resposible for bars in fight, takes max_value defines cappacity of bar, color_bg background color for bar, color_bar color for bar, pos_x and pos_y for possitionning hub on surface, height and with size for hub, side- (takes 1 or -1) 1= reduce bar to the left side, -1 reduce bar to the right side
     class hud_bars(sprite.Sprite):
         def __init__(self, max_value, color_bg, color_bar, pos_x, pos_y, height, width, side):
 
@@ -102,6 +106,7 @@ else:
             self.value=self.max_value
 
 
+# creating health , defence bar objects of player and enemy alco charisma bar object
     hp_bar_player = hud_bars(100, (255, 0, 0), (0, 255, 0), 800, 20, 20, 100, -1)
     hp_bar_enemy = hud_bars(100, (255, 0, 0), (0, 255, 0), 200, 20, 20, 100, 1)
     #stamine_bar_player=hud_bars(100, (125, 125, 125),(255, 255, 0), 800, 40, 20, 80, -1)
@@ -109,7 +114,7 @@ else:
     defence_bra_enemy=hud_bars(100,  (255, 255, 255),(125, 125, 125), 220, 40, 20, 80, 1)
     charsma_bra=hud_bars(100,(0,255,0),(210,105,30),450,20,20,200,1)
 
-
+# uloading animations
 
     path_walk = os.path.join(os.getcwd(), 'images/player1/Nowy/walk4/left')
 
@@ -155,8 +160,7 @@ else:
         images_charm.append(tmp)
     button_scale=0.1
 
-
-
+# creating player, enemy, buttons objects
     player = character(images_walk,images_jump,images_shout,images_attack,images_charm, 750, arena_level, -1,0.12,)
     enemy=enemy(images_walk,images_jump,images_shout,images_attack,images_charm,20,arena_level,1,0.12)
     button_jump_left = button(image.load('images/player1/icon_jump_left.png'),player.rect.left-30,player.rect.y-0,button_scale)
@@ -168,27 +172,28 @@ else:
     button_shaut = button(image.load('images/player1/icon_shaut.png'), player.rect.right + 10, player.rect.y + 80, button_scale)
     button_charm = button(image.load('images/player1/icon_charm.png'), player.rect.right -10, player.rect.y + 120, button_scale)
 
-
+ # sprite for moving all players buttons on arena
     moving_sprites=pygame.sprite.Group()
     action_buttons=pygame.sprite.Group(button_jump_left,button_walk_left,button_attack,button_jump_right,button_walk_right,button_shaut,button_charm)
     moving_sprites.add(player,enemy)
-
+# variables to define menu to display
     fight=False
     exit=False
     tour = True
-    #pętla gry
+
     button_scale = 0.1
 
     text_font = font.SysFont('Arial', 30)
 
 
+    # drawing text (used only in upgrade section)
     def draw_text(text, text_color, font, x, y, surface):
         img = font.render(text, True, text_color)
         surface.blit(img, (x, y))
         return img.get_rect()
 
 
-
+# uploading buttons for every menu
     play_button_image = os.path.join(os.getcwd(), 'images/play_button_image.png')
     load_button_image = os.path.join(os.getcwd(), 'images/load_button_image.png')
     quit_button_image = os.path.join(os.getcwd(), 'images/quit_button_image.png')
@@ -247,6 +252,7 @@ else:
     exit = False
     game_menu = False
     display_stats = [0, 0]
+    # game loop
     while exit!=True:
 
 
@@ -254,6 +260,7 @@ else:
             if eve.type ==QUIT:
                 exit=True
         surface.fill((255,255,255))
+        # fight section
         if fight:
             surface.blit(bg_image,(0,0))
 
@@ -368,9 +375,7 @@ else:
                 enemy.reset()
                 player.reset()
 
-
-
-
+# main menu section
         if menu:
             if play_button.draw():
                 create_character = True
@@ -383,6 +388,7 @@ else:
 
             if quit_button.draw():
                 exit = True
+ # upgrade section
         if create_character:
             r = Rect(player.display.get_rect()).topleft = (400, 10)
             surface.blit(player.display, r)
@@ -463,6 +469,7 @@ else:
                 defence_bra_player.refull()
             player.level_up(0)
             enemy.level_up(0)
+# loading saves section
         if loads:
             y = 80
             for i in game_saves.saved:
@@ -488,6 +495,7 @@ else:
             if main_menu_button_from_loads.draw():
                 menu = True
                 loads = False
+# menu section
         if game_menu:
             if fight_button.draw():
                 fight=True

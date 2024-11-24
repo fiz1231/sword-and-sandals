@@ -11,6 +11,7 @@ punch=mixer.Sound('sounds/punch.mp3')
 shout=mixer.Sound('sounds/shout.mp3')
 
 arena_level = 500
+# super class for players and enemy
 class character(sprite.Sprite):
     def __init__(self, images_walk, images_jump, images_shout, images_attack, images_charm, x, y, walking_side,
                  scale=1):
